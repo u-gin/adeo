@@ -32,6 +32,7 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
 
   int numberOfQuestions = 20;
   int numberOfCorrects = 0;
+  String? displayTime;
 
   List<Questions> questionsList = [];
 
@@ -44,12 +45,30 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
 
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
+  final _isHours = false;
+  final _isMilli = false;
+
 
   String _parseHtmlString(String? htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body!.text).documentElement!.text;
 
     return parsedString;
+  }
+
+  void startStopWatch(){
+    _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+  }
+
+  void stopStopWatch(){
+    _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _stopWatchTimer.dispose();
   }
 
   @override
@@ -88,13 +107,23 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
                         painter: RPSCustomPainter(),
                         child: Padding(
                           padding: const EdgeInsets.only(left: 25.0, top: 25),
-                          child: Text(
-                            "10:30",
-                            style: TextStyle(
-                                color: ColorSystem.primary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700
-                            ),
+                          child: StreamBuilder<int>(
+                            stream: _stopWatchTimer.rawTime,
+                            initialData: _stopWatchTimer.rawTime.value,
+                            builder: (context, snapshot){
+                              final value = snapshot.data;
+                              displayTime = StopWatchTimer.getDisplayTime(value!, hours: false, milliSecond: _isMilli);
+                              //print(displayTime);
+                              //print(value);
+                              return Text(
+                                displayTime!,
+                                style: TextStyle(
+                                  color: ColorSystem.primary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -123,6 +152,8 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
                               ),
                             );
                           }
+
+                          startStopWatch();
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -301,12 +332,16 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
 
       if (currentQuestionIndex == numberOfQuestions-1) {
 
+        stopStopWatch();
+        
+        //StopWatchTimer.getDisplayTime();
         Navigator.push(context,
           MaterialPageRoute(
             builder: (context) => ResultsScreen(
               numberOfCorrects: numberOfCorrects,
               questionsList: questionsList,
-              answeredQuestionsList: answeredQuestions
+              answeredQuestionsList: answeredQuestions,
+              displayTime: displayTime,
             ),
           ),
         );

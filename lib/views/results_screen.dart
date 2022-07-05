@@ -20,8 +20,9 @@ class ResultsScreen extends StatefulWidget{
   int? numberOfCorrects;
   List<Questions>? questionsList;
   List<AnsweredQuestions>? answeredQuestionsList;
+  String? displayTime;
 
-  ResultsScreen({this.numberOfCorrects, this.questionsList, this.answeredQuestionsList});
+  ResultsScreen({this.numberOfCorrects, this.questionsList, this.answeredQuestionsList, this.displayTime});
 
   @override
   _ResultsScreenState createState() => _ResultsScreenState();
@@ -36,6 +37,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
+    print(widget.displayTime);
+
 
     return Scaffold(
       body: Container(
