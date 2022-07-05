@@ -87,7 +87,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             Column(
                               children: [
                                 Text(
-                                  "01:35",
+                                  widget.displayTime!,
                                   style: TextStyle(
                                     color: ColorSystem.scoreText,
                                     fontSize: 26.0,
