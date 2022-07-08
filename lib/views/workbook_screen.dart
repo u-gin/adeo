@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:testproject/components/answer_tile_template.dart';
 import 'package:testproject/components/button_template.dart';
 import 'package:testproject/components/timer_shape.dart';
 import 'package:testproject/constants/colours.dart';
@@ -45,7 +44,6 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
 
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
-  final _isHours = false;
   final _isMilli = false;
 
 
@@ -68,6 +66,7 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
   @override
   void dispose() {
     super.dispose();
+    stopStopWatch();
     _stopWatchTimer.dispose();
   }
 
@@ -314,47 +313,47 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
   }
 
   nextQuestion(String question, List<Answer> answers, int? index){
+
     if (selectedIndex == null) {
-      return;
+      answerMark = -1;
     }
+
+    else if (answers[selectedIndex!].value == 1) {
+      numberOfCorrects += 1;
+      answerMark = 1;
+    }
+
     else{
-      
-      if (answers[selectedIndex!].value == 1) {
-        numberOfCorrects += 1;
-        answerMark = 1;
-      }
-      else{
-        answerMark = 0;
-      }
+      answerMark = 0;
+    }
 
-      //add answered question, options nd selected option to the list of answered questions
-      answeredQuestions.add(AnsweredQuestions(question: question, answerMArk: answerMark));
+    //add answered question, options nd selected option to the list of answered questions
+    answeredQuestions.add(AnsweredQuestions(question: question, answerMArk: answerMark));
 
-      if (currentQuestionIndex == numberOfQuestions-1) {
+    if (currentQuestionIndex == numberOfQuestions-1) {
 
-        stopStopWatch();
-        
-        //StopWatchTimer.getDisplayTime();
-        Navigator.push(context,
-          MaterialPageRoute(
-            builder: (context) => ResultsScreen(
-              numberOfCorrects: numberOfCorrects,
-              questionsList: questionsList,
-              answeredQuestionsList: answeredQuestions,
-              displayTime: displayTime,
-            ),
+      stopStopWatch();
+
+      //StopWatchTimer.getDisplayTime();
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => ResultsScreen(
+            numberOfCorrects: numberOfCorrects,
+            questionsList: questionsList,
+            answeredQuestionsList: answeredQuestions,
+            displayTime: displayTime,
           ),
-        );
-        //Navigator.pushNamed(context, ResultsScreen.routeName);
-      }
+        ),
+      );
+      //Navigator.pushNamed(context, ResultsScreen.routeName);
+    }
 
-      else{
-        setState(() {
-          selectedIndex = null;
-          currentQuestionIndex += 1;
-          //currentAnswersIndex += 1;
-        });
-      }
+    else{
+      setState(() {
+        selectedIndex = null;
+        currentQuestionIndex += 1;
+        //currentAnswersIndex += 1;
+      });
     }
 
   }
@@ -363,6 +362,13 @@ class _WorkbookScreenState extends State<WorkbookScreen> {
     if (currentQuestionIndex == 0) {
       return;
     }
+
+    if (answeredQuestions.last.answerMArk == 1 ) {
+      numberOfCorrects -= 1;
+    }
+
+    answeredQuestions.removeLast();
+
     setState(() {
       currentQuestionIndex -= 1;
       //currentAnswersIndex -= 1;

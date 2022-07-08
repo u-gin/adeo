@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:testproject/components/button_template.dart';
 import 'package:testproject/constants/colours.dart';
+import 'package:testproject/views/onboarding_screen.dart';
 
 class AlertScreen extends StatelessWidget{
 
@@ -77,7 +78,7 @@ class AlertScreen extends StatelessWidget{
                     buttonWidth: 150,
                     radius: 5,
                     buttonFunction: (){
-
+                      Navigator.pushNamedAndRemoveUntil(context, OnboardingScreen.routeName, (r) => false);
                     },
                   ),
                 ],

@@ -2,7 +2,7 @@
 class AnsweredQuestions{
 
   String question;
-  int? answerMArk;
+  int answerMArk;
 
-  AnsweredQuestions({required this.question, this.answerMArk});
+  AnsweredQuestions({required this.question, required this.answerMArk});
 }
